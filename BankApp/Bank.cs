@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -11,83 +13,146 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace BankApp
     {
 
+    public static bool ValidBank(Bank bank)
+        {
+        var type = typeof(Bank);
+        var attributes = type.GetCustomAttribute(false);
+        foreach (var attribute in attributes)
+            {
+            if (attribute is RegistrationAttribute Registration)
+                {
+                return bank.License.Contains(Registration.Lisense);
+                }
+            return true;
+            }
+        }
+
+    public class Registration : Attribute
+        {
+        public string License { get; set; } 
+        public Registration(string license) 
+            { 
+              this.Lisense = license;
+            }
+        }
+
+    [Registration("IBA")]
     public class Bank : IBank
         {
-        public Bank() 
+        
+        public Bank(string license) 
             {
+            string License = license;
             var accountList = new List<Account>();
             var customerList = new List<Customer>();
             var customerDictionary = new Dictionary<Account, Customer>();
             }
+        public string License { get; set; }
         List<Account> accountList;
         List<Customer> customerList;
         Dictionary<Account, Customer> customerDictionary;
-        protected double Rate { get; set; }
         static double rate = 7.5;
+        protected double Rate { get; set; }
 
 
-        public Account OpenNewAccount(int id, double num) 
+        public Account OpenNewAccount(int id, double num)
             {
-            var account = new Account(id, num);
-            if(this.accountList == null) { this.accountList = new List<Account>(); }
-            accountList.Add(account);
-            return account;
+
+            return new Account(id, num);
+            try
+                {
+                var account = new Account(id, num);
+                if (this.accountList == null) { this.accountList = new List<Account>(); }
+                accountList.Add(account);
+                return account;
+                }
+
+            catch (Exception ex)
+                {
+                throw ex;
+                Console.WriteLine(ex.GetType().ToString(), ex.Message);
+                }
             }
+
         public void AddNewCustomer(string name, string lastName, int id)
             {
-            if(customerList == null) {  customerList = new List<Customer>(); }
             customerList.Add(new Customer(name, lastName, id));
             }
+
+
         public void BindAccontToCustomer(Account account, Customer customer)
             {
             if (customerDictionary == null)
                 {
                 customerDictionary = new Dictionary<Account, Customer>();
                 }
-            //customerDictionary.Add(account, customer);
             if (!customerDictionary.ContainsKey(account))
                 {
-                //customerDictionary.Add(account, customer);
-                if (customer.accountCustomer == null) { customer.accountCustomer = new List<Account>(); }
-                customer.accountCustomer.Add(account);
-
+                if(customer.AccountCustomer is null) customer.AccountCustomer = new List<Account> { account };
                 }
             else { Console.Write("Dictionary already has this account"); }
             }
+
         public List<Account> GetAccounts()
             {
-            foreach (var account in accountList)
+            try
                 {
-                Console.Write(account);
+                foreach (var account in accountList)
+                    {
+                    Console.Write(account);
+                    }
+                return accountList;
                 }
-            return accountList;
+            catch (NullReferenceException ex)
+                { 
+                Console.Write(ex.GetType().ToString(), ex.Message);
+                throw ex;
+                }
             }
+
+
         public List<Customer> GetCustomerList()
             { 
-            foreach (var customer in customerList) 
+            try
                 {
-                Console.Write(customer);
+                foreach (var customer in customerList)
+                    {
+                    Console.Write(customer);
+                    }
+                return customerList;
                 }
-            return customerList; 
+            catch (NullReferenceException ex)
+                {
+                Console.Write(ex.GetType().ToString(), ex.Message);
+                throw ex;
+                }
             }
+
+
         public void TrancferFromTo(Account account1, Account account2, double sum)
             {
-            if (account1 != null && account2 != null && account1.getAccountBalance() >= sum)
-                {
-                if (account1.transaction == null) { account1.Transaction = new List<string>(); }
-                if (account2.transaction == null) { account2.Transaction = new List<string>(); }
-                DateTime dt = DateTime.Now;
-                account1.TakeMoney(sum);
-                account2.PutMoney(sum);
-                account1.Transaction.Add($"{dt} {account1} operation: trancfer UAN: {sum} ");
-                Console.WriteLine($"{dt} {account1} operation: trancfer UAN: {sum} ");
-                account2.Transaction.Add($"{dt} {account2} operation: comming UAN: {sum} from {account1} ");
-                Console.WriteLine($"{dt} {account2} operation: comming UAN: {sum} ");
+            try {
+                if (account1 != null && account2 != null && account1.getAccountBalance() >= sum)
+                    {
+                    if (account1.transaction == null) { account1.Transaction = new List<string>(); }
+                    if (account2.transaction == null) { account2.Transaction = new List<string>(); }
+                    DateTime dt = DateTime.Now;
+                    account1.TakeMoney(sum);
+                    account2.PutMoney(sum);
+                    account1.Transaction.Add($"{dt} {account1} operation: trancfer UAN: {sum} ");
+                    Console.WriteLine($"{dt} {account1} operation: trancfer UAN: {sum} ");
+                    account2.Transaction.Add($"{dt} {account2} operation: comming UAN: {sum} from {account1} ");
+                    Console.WriteLine($"{dt} {account2} operation: comming UAN: {sum} ");
 
+                    }
+                else { Console.WriteLine("Cheeck input parameters"); }
                 }
-            else { Console.WriteLine("Cheeck input parametrs"); }
+            catch(Exception e) 
+                {
+                throw new Exception("Check input parameters");
+                }
             }
-         public void WithdrawCash(Account account, double sum) 
+        public void WithdrawCash(Account account, double sum) 
             {
             if (account != null && account.getAccountBalance() >= sum)
                 {
@@ -114,7 +179,10 @@ namespace BankApp
             }
 
         }
-    }
+    
+    } 
+  
+
 
 
 

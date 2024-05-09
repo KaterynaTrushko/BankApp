@@ -17,8 +17,11 @@ namespace BankApp
         int Id { get; set; }
         public Account(int id, double num) 
             { 
-               Id = id;
-               balance = new Money(num);
+            if(id > 0 && num > 0) 
+                {
+                Id = id;
+                balance = new Money(num);
+                }
             }
 
         public void TakeMoney(double num)

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace BankApp
     {
@@ -23,7 +25,7 @@ namespace BankApp
         public double Multip(double a, double b)
             { return a * b; }
         public double Divaid(double a, double b)
-          { return a / b; }
+            { return a / b; }
          
         }
    
