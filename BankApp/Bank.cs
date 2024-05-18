@@ -13,30 +13,30 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace BankApp
     {
 
-    public static bool ValidBank(Bank bank)
-        {
-        var type = typeof(Bank);
-        var attributes = type.GetCustomAttribute(false);
-        foreach (var attribute in attributes)
-            {
-            if (attribute is RegistrationAttribute Registration)
-                {
-                return bank.License.Contains(Registration.Lisense);
-                }
-            return true;
-            }
-        }
+    //public static bool ValidBank(Bank bank)
+    //    {
+    //    var type = typeof(Bank);
+    //    var attributes = type.GetCustomAttribute(false);
+    //    foreach (var attribute in attributes)
+    //        {
+    //        if (attribute is RegistrationAttribute Registration)
+    //            {
+    //            return bank.License.Contains(Registration.Lisense);
+    //            }
+    //        return true;
+    //        }
+    //    }
 
-    public class Registration : Attribute
-        {
-        public string License { get; set; } 
-        public Registration(string license) 
-            { 
-              this.Lisense = license;
-            }
-        }
+    //public class Registration : Attribute
+    //    {
+    //    public string License { get; set; } 
+    //    public Registration(string license) 
+    //        { 
+    //          Lisense = license;
+    //        }
+    //    }
 
-    [Registration("IBA")]
+    //[Registration("IBA")]
     public class Bank : IBank
         {
         
@@ -76,7 +76,7 @@ namespace BankApp
 
         public void AddNewCustomer(string name, string lastName, int id)
             {
-            customerList.Add(new Customer(name, lastName, id));
+            customerList.Add(new Customer(name, lastName ));
             }
 
 

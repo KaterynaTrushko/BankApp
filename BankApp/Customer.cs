@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace BankApp
     {
-    public class Customer(string name, string lastName, int id)
+    public class Customer(string name, string lastName, int id = 0)
         {
         public int Id { get; set; } = id;
-        public string Name { get; set; } = name;
+        public string FirstName { get; set; } = name;
         public string LastName { get; set; } = lastName;
         public List<Account> AccountCustomer { get; set; }
 
@@ -23,7 +23,7 @@ namespace BankApp
                     {
                     sum = sum + this.AccountCustomer[i].getAccountBalance();
                     }
-                Console.WriteLine($"{Name} {LastName} has {sum} UAN on {this.AccountCustomer.Count} account"); 
+                Console.WriteLine($"{FirstName} {LastName} has {sum} UAN on {this.AccountCustomer.Count} account"); 
                 return sum;
                 }
             catch (Exception e)
@@ -34,7 +34,7 @@ namespace BankApp
             }    
         public override string ToString() 
             {
-            return $"Customer ID{this.Id} {this.Name} {this.LastName}";
+            return $"Customer  {this.FirstName} {this.LastName}";
             }
         }
     }
